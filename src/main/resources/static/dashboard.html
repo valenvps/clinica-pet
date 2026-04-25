@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Clínica Pet </title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <div class="header">
+            <div class="logo-area">
+                <h2>🐾 Clínica Pet </h2>
+                <p>Bem-vindo(a), <span id="nomeUsuario">Carregando...</span></p>
+            </div>
+            <button onclick="logout()" class="btn-sair">Sair</button>
+        </div>
+
+        <div class="dashboard-menu">
+            <button onclick="window.location.href='meus-pets.html'" class="menu-btn">
+                🐕 Meus Pets
+            </button>
+            <button onclick="window.location.href='cadastro-pet.html'" class="menu-btn">
+                ➕ Cadastrar Pet
+            </button>
+        </div>
+
+        <div class="resumo">
+            <div class="card">
+                <h3> Resumo</h3>
+                <p>Gerencie seus pets e exames de forma fácil e rápida.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
