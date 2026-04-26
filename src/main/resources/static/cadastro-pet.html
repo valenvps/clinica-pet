@@ -14,7 +14,7 @@
             <button onclick="window.location.href='meus-pets.html'" class="btn-voltar">Voltar</button>
         </div>
 
-        <form id="formCadastroPet">
+        <form id="formCadastroPet" onsubmit="cadastrarPet(event)">
             <div class="campo">
                 <label>NOME DO PET</label>
                 <input type="text" id="nomePet" placeholder="Ex: Thor, Luna, Bob" required>
