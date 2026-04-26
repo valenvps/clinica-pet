@@ -17,15 +17,14 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public String login(Usuario usuario) {
-        return usuarioRepository.findByEmail(usuario.getEmail())
-                .map(u -> {
-                    if (u.getSenha().equals(usuario.getSenha())) {
-                        return "Login realizado com sucesso!";
-                    } else {
-                        return "Senha incorreta!";
-                    }
-                })
-                .orElse("Usuário não encontrado!");
+    public Usuario login(Usuario usuario) {
+        Usuario encontrado = usuarioRepository.findByEmail(usuario.getEmail())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        if (encontrado.getSenha().equals(usuario.getSenha())) {
+            return encontrado;
+        }
+
+        throw new RuntimeException("Senha incorreta");
     }
 }

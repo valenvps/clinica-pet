@@ -5,6 +5,7 @@ import br.com.valentina.clinicapet.service.UsuarioService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
@@ -20,7 +21,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Usuario usuario) {
+    public Usuario login(@RequestBody Usuario usuario) {
         return usuarioService.login(usuario);
     }
 }
