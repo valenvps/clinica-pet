@@ -13,6 +13,7 @@ public class Pet {
     private String nome;
     private String raca;
     private int idade;
+    private double peso;
 
     @ManyToOne
     private Usuario usuario;
@@ -44,6 +45,9 @@ public class Pet {
     public void setIdade(int idade) {
         this.idade = idade;
     }
+
+    public double getPeso() { return peso; }
+    public void setPeso(double peso) { this.peso = peso; }
 
     public Usuario getUsuario() {
         return usuario;
