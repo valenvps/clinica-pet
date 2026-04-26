@@ -1,190 +1,165 @@
+const API = "http://localhost:8080";
 
+
+// LOGIN
 function fazerLogin() {
     const email = document.getElementById('email').value;
     const senha = document.getElementById('senha').value;
-    
-    if(email === "professor@pet.com" && senha === "123456") {
-        const usuarioLogado = { 
-            nome: "professor", 
-            email: email
-        };
-        localStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
-        alert("Login bem-sucedido!");
+
+    fetch(${API}/usuarios/login, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, senha })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Login inválido");
+        return res.json();
+    })
+    .then(data => {
+        localStorage.setItem('usuarioLogado', JSON.stringify(data));
         window.location.href = 'dashboard.html';
-    } else {
-        alert("E-mail ou senha incorretos! Use: professor@pet.com / 123456");
-    }
-}
-
-function cadastrarUsuario() {
-    const nome = document.getElementById('nomeRegistro').value;
-    const email = document.getElementById('emailRegistro').value;
-    const senha = document.getElementById('senhaRegistro').value;
-    
-    if(nome && email && senha) {
-        alert(`Conta criada para ${nome}! Agora faça login.`);
-        fecharCadastro();
-        document.getElementById('email').value = email;
-        document.getElementById('senha').value = '';
-    } else {
-        alert("Preencha todos os campos!");
-    }
-}
-
-function mostrarCadastro() {
-    document.getElementById('formLogin').style.display = 'none';
-    document.getElementById('formCadastro').style.display = 'block';
-}
-
-function fecharCadastro() {
-    document.getElementById('formLogin').style.display = 'block';
-    document.getElementById('formCadastro').style.display = 'none';
-}
-
-function logout() {
-    localStorage.removeItem('usuarioLogado');
-    window.location.href = 'index.html';
+    })
+    .catch(() => alert("E-mail ou senha inválidos"));
 }
 
 
+// LISTAR PETS
 function carregarPets() {
     const container = document.getElementById('listaPets');
     if(!container) return;
-    
-    const pets = [
-        { id: 1, nome: "Thor", raca: "Labrador", idade: 3, peso: 25 },
-        { id: 2, nome: "Luna", raca: "Siamês", idade: 2, peso: 4 },
-        { id: 3, nome: "Bob", raca: "Vira-lata", idade: 5, peso: 8 }
-    ];
-    
-    container.innerHTML = '';
-    
-    for(let i = 0; i < pets.length; i++) {
-        const pet = pets[i];
-        container.innerHTML += `
-            <div class="pet-card">
-                <div class="pet-info">
-                    <h3>🐕 ${pet.nome}</h3>
-                    <p>Raça: ${pet.raca} | Idade: ${pet.idade} anos | Peso: ${pet.peso} kg</p>
+
+    fetch(${API}/pets)
+    .then(res => res.json())
+    .then(pets => {
+        container.innerHTML = '';
+
+        pets.forEach(pet => {
+            container.innerHTML += `
+                <div class="pet-card">
+                    <div class="pet-info">
+                        <h3>🐕 ${pet.nome}</h3>
+                        <p>Raça: ${pet.raca} | Idade: ${pet.idade}</p>
+                    </div>
+                    <div class="pet-actions">
+                        <button class="btn-exames" onclick="verExames(${pet.id}, '${pet.nome}')">Ver Exames</button>
+                        <button class="btn-deletar" onclick="deletarPet(${pet.id})">Excluir</button>
+                    </div>
                 </div>
-                <div class="pet-actions">
-                    <button class="btn-exames" onclick="verExames(${pet.id}, '${pet.nome}')">Ver Exames</button>
-                    <button class="btn-deletar" onclick="deletarPet(${pet.id})">Excluir</button>
-                </div>
-            </div>
-        `;
-    }
+            `;
+        });
+    });
 }
 
+
+// CADASTRAR PET
 function cadastrarPet(event) {
-    if(event) event.preventDefault();
+    event.preventDefault();
+
     const nome = document.getElementById('nomePet').value;
-    
-    if(nome) {
-        alert(`Pet "${nome}" cadastrado com sucesso!`);
+    const raca = document.getElementById('racaPet').value;
+    const idade = document.getElementById('idadePet').value;
+
+    fetch(${API}/pets, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            nome,
+            raca,
+            idade,
+            usuario: { id: 1 }
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Pet cadastrado!");
         window.location.href = 'meus-pets.html';
-    } else {
-        alert("Preencha o nome do pet!");
-    }
-}
-
-function deletarPet(petId) {
-    if(confirm('Tem certeza que deseja excluir este pet?')) {
-        alert('Pet excluído com sucesso!');
-        carregarPets();
-    }
-}
-
-function verExames(petId, petNome) {
-    localStorage.setItem('petSelecionadoId', petId);
-    localStorage.setItem('petSelecionadoNome', petNome);
-    window.location.href = 'exames.html';
+    });
 }
 
 
-function carregarNomePet() {
-    const petNome = localStorage.getItem('petSelecionadoNome');
-    const elemento = document.getElementById('nomePetExame');
-    if(elemento) {
-        elemento.innerText = petNome || 'Pet não identificado';
-    }
+// DELETAR PET
+function deletarPet(id) {
+    if(!confirm("Tem certeza?")) return;
+
+    fetch(${API}/pets/${id}, {
+        method: "DELETE"
+    })
+    .then(() => carregarPets());
 }
 
+
+// LISTAR EXAMES
 function carregarExames() {
-    const petId = localStorage.getItem('petSelecionadoId');
     const container = document.getElementById('listaExames');
+    const petId = localStorage.getItem('petSelecionadoId');
+
     if(!container) return;
-    
-    const examesPorPet = {
-        1: [
-            { tipo: "Exame de Sangue", descricao: "Hemograma completo - Tudo normal", data: "15/03/2024" }
-        ],
-        2: [
-            { tipo: "Ultrassom", descricao: "Abdômen - Órgãos saudáveis", data: "20/03/2024" }
-        ],
-        3: [
-            { tipo: "Vacina V10", descricao: "Dose aplicada", data: "01/04/2024" }
-        ]
-    };
-    
-    const exames = examesPorPet[petId] || [];
-    
-    if(exames.length === 0) {
-        container.innerHTML = '<p>Nenhum exame cadastrado para este pet ainda.</p>';
-        return;
-    }
-    
-    container.innerHTML = '';
-    for(let i = 0; i < exames.length; i++) {
-        const exame = exames[i];
-        container.innerHTML += `
-            <div class="exame-card">
-                <h4>🔬 ${exame.tipo}</h4>
-                <p>📝 ${exame.descricao}</p>
-                <p>📅 Data: ${exame.data}</p>
-            </div>
-        `;
-    }
+
+    fetch(${API}/exames)
+    .then(res => res.json())
+    .then(exames => {
+        const filtrados = exames.filter(e => e.pet.id == petId);
+
+        if(filtrados.length === 0){
+            container.innerHTML = "<p>Nenhum exame encontrado</p>";
+            return;
+        }
+
+        container.innerHTML = '';
+
+        filtrados.forEach(e => {
+            container.innerHTML += `
+                <div class="exame-card">
+                    <h4>${e.nome}</h4>
+                    <p>${e.resultado}</p>
+                    <p>Status: ${e.status}</p>
+                </div>
+            `;
+        });
+    });
 }
 
+
+// CADASTRAR EXAME
 function cadastrarExame(event) {
-    if(event) event.preventDefault();
-    const tipo = document.getElementById('tipoExame').value;
-    
-    if(tipo) {
-        alert(`Exame "${tipo}" cadastrado com sucesso!`);
-        document.getElementById('formCadastroExame').reset();
+    event.preventDefault();
+
+    const nome = document.getElementById('tipoExame').value;
+    const resultado = document.getElementById('descricaoExame').value;
+    const petId = localStorage.getItem('petSelecionadoId');
+
+    fetch(${API}/exames, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            nome,
+            resultado,
+            status: "Pronto",
+            pet: { id: petId }
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Exame cadastrado!");
         carregarExames();
-    } else {
-        alert("Preencha o tipo do exame!");
-    }
+    });
 }
 
 
+// CONTROLE DE PÁGINA
 window.onload = function() {
     const usuarioLogado = localStorage.getItem('usuarioLogado');
     const pagina = window.location.pathname;
-    
-    
-    if(!usuarioLogado && !pagina.includes('index.html') && pagina !== '/' && !pagina.endsWith('/')) {
+
+    if(!usuarioLogado && !pagina.includes('index.html')) {
         window.location.href = 'index.html';
     }
-    
- 
-    if(pagina.includes('meus-pets.html')) {
-        carregarPets();
-    }
-    
-    if(pagina.includes('exames.html')) {
-        carregarNomePet();
-        carregarExames();
-    }
-    
-    if(pagina.includes('dashboard.html') && usuarioLogado) {
-        const usuario = JSON.parse(usuarioLogado);
-        const nomeElem = document.getElementById('nomeUsuario');
-        if(nomeElem) {
-            nomeElem.innerText = usuario.nome || usuario.email;
-        }
-    }
-};
+
+    if(pagina.includes('meus-pets.html')) carregarPets();
+    if(pagina.includes('exames.html')) carregarExames(
