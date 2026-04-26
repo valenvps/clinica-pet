@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exames - Clínica Pet </title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="container-exames">
+        <div class="header">
+            <div class="logo-area">
+                <h2>🔬 Exames</h2>
+                <p>Pet: <span id="nomePetExame">Carregando...</span></p>
+            </div>
+            <button onclick="window.location.href='meus-pets.html'" class="btn-voltar">Voltar</button>
+        </div>
+
+        <div id="listaExames" class="lista-exames">
+            <p>Carregando exames...</p>
+        </div>
+
+        <div class="cadastro-exame">
+            <h3>➕ Novo exame</h3>
+            <form id="formCadastroExame">
+                <input type="hidden" id="petIdExame">
+                <div class="campo">
+                    <label>TIPO DE EXAME</label>
+                    <input type="text" id="tipoExame" placeholder="Ex: Sangue, Raio-X, Ultrassom" required>
+                </div>
+                <div class="campo">
+                    <label>DESCRIÇÃO</label>
+                    <textarea id="descricaoExame" rows="3" placeholder="Detalhes do exame..." required></textarea>
+                </div>
+                <div class="campo">
+                    <label>DATA DO EXAME</label>
+                    <input type="date" id="dataExame" required>
+                </div>
+                <button type="submit">Cadastrar Exame</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

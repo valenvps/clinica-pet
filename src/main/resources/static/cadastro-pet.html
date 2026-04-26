@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Pet - Clínica Pet</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="cadastro-pet-box">
+        <div class="header">
+            <h2> Cadastrar novo pet</h2>
+            <button onclick="window.location.href='meus-pets.html'" class="btn-voltar">Voltar</button>
+        </div>
+
+        <form id="formCadastroPet">
+            <div class="campo">
+                <label>NOME DO PET</label>
+                <input type="text" id="nomePet" placeholder="Ex: Thor, Luna, Bob" required>
+            </div>
+
+            <div class="campo">
+                <label>RAÇA</label>
+                <input type="text" id="racaPet" placeholder="Ex: Vira-lata, Poodle, Labrador" required>
+            </div>
+
+            <div class="campo">
+                <label>IDADE (anos)</label>
+                <input type="number" id="idadePet" placeholder="Ex: 3" required>
+            </div>
+
+            <div class="campo">
+                <label>PESO (kg)</label>
+                <input type="text" id="pesoPet" placeholder="Ex: 5.5" required>
+            </div>
+
+            <button type="submit">Cadastrar Pet</button>
+        </form>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
